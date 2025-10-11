@@ -102,7 +102,7 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
                 </div>
 
                 <div className="flex flex-wrap gap-4">
-                  <button className="text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all text-sm" style={{ backgroundColor: '#7ECBF2' }}>
+                  <button onClick={onGoToLogin} className="text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all text-sm" style={{ backgroundColor: '#7ECBF2' } }>
                     Solicitar servicio ahora →
                   </button>
                   <button className="px-8 py-3 rounded-lg font-semibold hover:bg-sky-50 transition-colors text-sm" style={{ border: '1px solid #7ECBF2', color: '#7ECBF2' }}>
@@ -175,7 +175,7 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
                     Máxima disponibilidad
                   </li>
                 </ul>
-                <button className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
+                <button onClick={onGoToLogin} className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
                   Solicitar ahora
                 </button>
               </div>
@@ -200,7 +200,7 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
                     Personas confiables con disposición de ayudar
                   </li>
                 </ul>
-                <button className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
+                <button onClick={onGoToLogin} className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
                   Solicitar ahora
                 </button>
               </div>
@@ -229,7 +229,7 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
                     Acompañamiento presencial en procesos
                   </li>
                 </ul>
-                <button className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
+                <button onClick={onGoToLogin} className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
                   Solicitar ahora
                 </button>
               </div>
