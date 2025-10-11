@@ -16,7 +16,7 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-8">
                 <div className="flex items-center space-x-2">
-                  <img src="/imagen (1).png" alt="ManosAmigas" className="h-10 w-10" />
+                  <img src="/LogoColor.png" alt="ManosAmigas" className="h-10 w-10" />
                   <span className="text-xl font-semibold" style={{ color: '#7ECBF2' }}>ManosAmigas</span>
                 </div>
                 <nav className="hidden md:flex space-x-8">
@@ -319,7 +319,7 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
                 <span className="text-xl font-semibold">ManosAmigas</span>
               </div>
               <p className="text-white opacity-90 text-sm leading-relaxed mb-4">
-                  Puede una mano sencilla tu vida, brindar la tuya transforma la de otro
+                  “Pedir una mano simplifica tu vida, brindar la tuya transforma la del otro.”
                 </p>
               </div>
 
