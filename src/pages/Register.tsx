@@ -83,9 +83,9 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
     }
 
     if (step === 3) {
-      if (!formData.documentFront) newErrors.documentFront = 'La foto frontal es requerida';
-      if (!formData.documentBack) newErrors.documentBack = 'La foto trasera es requerida';
-      if (!formData.selfieWithDocument) newErrors.selfieWithDocument = 'La selfie con documento es requerida';
+      // if (!formData.documentFront) newErrors.documentFront = 'La foto frontal es requerida';
+      // if (!formData.documentBack) newErrors.documentBack = 'La foto trasera es requerida';
+      // if (!formData.selfieWithDocument) newErrors.selfieWithDocument = 'La selfie con documento es requerida';
     }
 
     if (step === 4) {
