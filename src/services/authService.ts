@@ -1,46 +1,99 @@
-import api from "../lib/api";
-import { User, RegisterFormData } from "../types/User";
+import api from "../lib/api.ts";
+import { User, RegisterFormData } from "../types/User.ts";
+
+type AuthSuccessResponse = {
+    token: string;
+    id: string; 
+    email: string;
+    name: string;
+    rol: string;
+    gender: string;
+};
+
+type AuthResult = { success: boolean; user?: User; error?: string };
+
+const mapApiResponseToUser = (apiData: Omit<AuthSuccessResponse, 'token'>): User => {
+    return {
+        persona_id: apiData.id,
+        nombres: apiData.name, 
+        apellidos: "", 
+        tipo_identificacion: "", 
+        numero_identificacion: "", 
+        email: apiData.email,
+        telefono: "", 
+        fecha_nacimiento: "", 
+        genero: apiData.gender,
+        rol: apiData.rol,
+        estado_cuenta: "Pendiente verificación",
+        direccion: undefined,
+        ciudad: undefined,
+        departamento: undefined,
+        codigo_postal: undefined,
+        pregunta_seguridad: undefined,
+        respuesta_seguridad: undefined,
+        aceptar_terminos: false,
+        aceptar_datos: false,
+        recibir_notificaciones: false,
+    } as User;
+};
 
 export const authService = {
-  // Registro de usuario
-  async register(formData: RegisterFormData): Promise<{ success: boolean; user?: User; error?: string }> {
+  async register(formData: RegisterFormData): Promise<AuthResult> {
     try {
-      const response = await api.post("/auth/register", formData);
-      return { success: true, user: response.data };
+      const response = await api.post<AuthSuccessResponse>("api/Auth/register", formData);
+      
+      const { token, ...restData } = response.data; 
+
+      if (token) {
+        localStorage.setItem("token", token);
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      }
+      
+      const user: User = mapApiResponseToUser(restData as any); 
+      
+      return { success: true, user };
+      
     } catch (error: any) {
-      console.error("Registration error:", error);
       return {
         success: false,
-        error: error.response?.data?.message || "Error al registrar usuario",
+        error: error.response?.data?.error || "Error al registrar usuario",
       };
     }
   },
 
-  // Inicio de sesión
-  async login(email: string, password: string): Promise<{ success: boolean; user?: User; error?: string }> {
+  async login(email: string, password: string): Promise<AuthResult> {
     try {
-      const response = await api.post("/auth/login", { email, password });
-      const { token, user } = response.data;
+      const response = await api.post<AuthSuccessResponse>("api/Auth/login", { email, password });
+      
+      const { token, ...restData } = response.data;
 
-      // Guardar token localmente
       if (token) {
         localStorage.setItem("token", token);
         api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       }
 
+      const user: User = mapApiResponseToUser(restData as any);
+
       return { success: true, user };
+      
     } catch (error: any) {
-      console.error("Login error:", error);
       return {
         success: false,
-        error: error.response?.data?.message || "Error al iniciar sesión",
+        error: error.response?.data?.error || "Error al iniciar sesión",
       };
     }
   },
 
-  // Cerrar sesión
   async logout() {
-    localStorage.removeItem("token");
-    delete api.defaults.headers.common["Authorization"];
+    try {
+      localStorage.removeItem("token");
+      delete api.defaults.headers.common["Authorization"];
+
+      await api.post("api/Auth/logout");
+    }
+    catch(error: any)
+    {
+      console.error("Error during logout:", error);
+    }
   },
 };

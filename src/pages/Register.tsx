@@ -7,58 +7,61 @@ interface RegisterProps {
   onRegister: (userData: RegisterFormData) => Promise<void>;
   onBackToLogin: () => void;
   isLoading?: boolean;
+  apiError?: string | null;
 }
 
-export default function Register({ onRegister, onBackToLogin, isLoading: externalLoading = false }: RegisterProps) {
+export default function Register({ onRegister, onBackToLogin, isLoading: externalLoading = false, apiError }: RegisterProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState<RegisterFormData>({
-    name: '',
-    email: '',
-    phone: '',
-    birthDate: '',
-    gender: '',
-    documentType: '',
-    documentNumber: '',
-    documentExpedition: '',
-    documentPlace: '',
-    documentFront: null,
-    documentBack: null,
-    selfieWithDocument: null,
-    address: '',
-    city: '',
-    department: '',
-    postalCode: '',
-    password: '',
-    confirmPassword: '',
-    securityQuestion: '',
-    securityAnswer: '',
-    acceptTerms: false,
-    acceptDataTreatment: false,
-    receiveNotifications: false
+    Name: '',
+    Email: '',
+    PhoneNumber: '',
+    Role: '0',
+    DateOfBirth: '',
+    Gender: '',
+    IdentificationType: '',
+    IdentificationNumber: '',
+    IssueDate: '',
+    IssuePlace: '',
+    DocTypeId: 1,
+    DocumentFront: null,
+    DocumentBack: null,
+    SelfieWithDocument: null,
+    Address: '',
+    City: '',
+    Department: '',
+    PostalCode: '',
+    Password: '',
+    ConfirmPassword: '',
+    SecurityQuestion: '',
+    SecurityAnswer: '',
+    AcceptTerms: false,
+    AcceptDataPolicy: false,
+    WantsNotifications: false
   });
 
   const colombianCities = ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Cartagena', 'Cúcuta', 'Bucaramanga', 'Pereira', 'Santa Marta', 'Ibagué'];
   const colombianDepartments = ['Antioquia', 'Atlántico', 'Bolívar', 'Boyacá', 'Caldas', 'Cundinamarca', 'Magdalena', 'Santander', 'Valle del Cauca'];
 
-  const validateEmail = (email: string) => {
+  const validateEmail = (Email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+    return re.test(Email);
   };
 
-  const validatePhone = (phone: string) => {
-    return phone.replace(/\D/g, '').length === 10;
+  const validatePhone = (PhoneNumber: string) => {
+    return PhoneNumber.replace(/\D/g, '').length === 10;
   };
 
-  const getPasswordStrength = (password: string): { level: number; text: string; color: string } => {
+  const getPasswordStrength = (Password: string): { level: number; text: string; color: string } => {
     let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    if (Password.length >= 8) strength++;
+    if (/[A-Z]/.test(Password)) strength++;
+    if (/[0-9]/.test(Password)) strength++;
+    if (/[^A-Za-z0-9]/.test(Password)) strength++;
 
     if (strength <= 1) return { level: 1, text: 'Débil', color: '#EF4444' };
     if (strength === 2 || strength === 3) return { level: 2, text: 'Media', color: '#F59E0B' };
@@ -69,47 +72,47 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
     const newErrors: Record<string, string> = {};
 
     if (step === 1) {
-      if (!formData.name.trim()) newErrors.name = 'El nombre es requerido';
-      if (!formData.email.trim()) newErrors.email = 'El email es requerido';
-      else if (!validateEmail(formData.email)) newErrors.email = 'Email inválido';
-      if (!formData.phone.trim()) newErrors.phone = 'El teléfono es requerido';
-      else if (!validatePhone(formData.phone)) newErrors.phone = 'Teléfono debe tener 10 dígitos';
-      if (!formData.birthDate) newErrors.birthDate = 'La fecha de nacimiento es requerida';
+      if (!formData.Name.trim()) newErrors.Name = 'El nombre es requerido';
+      if (!formData.Email.trim()) newErrors.Email = 'El email es requerido';
+      else if (!validateEmail(formData.Email)) newErrors.Email = 'Email inválido';
+      if (!formData.PhoneNumber.trim()) newErrors.PhoneNumber = 'El teléfono es requerido';
+      else if (!validatePhone(formData.PhoneNumber)) newErrors.PhoneNumber = 'Teléfono debe tener 10 dígitos';
+      if (!formData.DateOfBirth) newErrors.DateOfBirth = 'La fecha de nacimiento es requerida';
     }
 
     if (step === 2) {
-      if (!formData.documentType) newErrors.documentType = 'El tipo de documento es requerido';
-      if (!formData.documentNumber.trim()) newErrors.documentNumber = 'El número de documento es requerido';
+      if (!formData.IdentificationType) newErrors.IdentificationType = 'El tipo de documento es requerido';
+      if (!formData.IdentificationNumber.trim()) newErrors.IdentificationNumber = 'El número de documento es requerido';
     }
 
     if (step === 3) {
-      // if (!formData.documentFront) newErrors.documentFront = 'La foto frontal es requerida';
-      // if (!formData.documentBack) newErrors.documentBack = 'La foto trasera es requerida';
-      // if (!formData.selfieWithDocument) newErrors.selfieWithDocument = 'La selfie con documento es requerida';
+      // if (!formData.DocumentFront) newErrors.DocumentFront = 'La foto frontal es requerida';
+      // if (!formData.DocumentBack) newErrors.DocumentBack = 'La foto trasera es requerida';
+      // if (!formData.SelfieWithDocument) newErrors.SelfieWithDocument = 'La selfie con documento es requerida';
     }
 
     if (step === 4) {
-      if (!formData.address.trim()) newErrors.address = 'La dirección es requerida';
-      if (!formData.city) newErrors.city = 'La ciudad es requerida';
-      if (!formData.department) newErrors.department = 'El departamento es requerido';
+      if (!formData.Address.trim()) newErrors.Address = 'La dirección es requerida';
+      if (!formData.City) newErrors.City = 'La ciudad es requerida';
+      if (!formData.Department) newErrors.Department = 'El departamento es requerido';
     }
 
     if (step === 5) {
-      if (!formData.password) newErrors.password = 'La contraseña es requerida';
-      else if (formData.password.length < 8) newErrors.password = 'Mínimo 8 caracteres';
-      else if (!/[A-Z]/.test(formData.password)) newErrors.password = 'Debe contener al menos una mayúscula';
-      else if (!/[0-9]/.test(formData.password)) newErrors.password = 'Debe contener al menos un número';
+      if (!formData.Password) newErrors.Password = 'La contraseña es requerida';
+      else if (formData.Password.length < 8) newErrors.Password = 'Mínimo 8 caracteres';
+      else if (!/[A-Z]/.test(formData.Password)) newErrors.Password = 'Debe contener al menos una mayúscula';
+      else if (!/[0-9]/.test(formData.Password)) newErrors.Password = 'Debe contener al menos un número';
 
-      if (!formData.confirmPassword) newErrors.confirmPassword = 'Confirma tu contraseña';
-      else if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Las contraseñas no coinciden';
+      if (!formData.ConfirmPassword) newErrors.ConfirmPassword = 'Confirma tu contraseña';
+      else if (formData.Password !== formData.ConfirmPassword) newErrors.ConfirmPassword = 'Las contraseñas no coinciden';
 
-      if (!formData.securityQuestion) newErrors.securityQuestion = 'Selecciona una pregunta de seguridad';
-      if (!formData.securityAnswer.trim()) newErrors.securityAnswer = 'La respuesta es requerida';
+      if (!formData.SecurityQuestion) newErrors.SecurityQuestion = 'Selecciona una pregunta de seguridad';
+      if (!formData.SecurityAnswer.trim()) newErrors.SecurityAnswer = 'La respuesta es requerida';
     }
 
     if (step === 6) {
-      if (!formData.acceptTerms) newErrors.acceptTerms = 'Debes aceptar los términos y condiciones';
-      if (!formData.acceptDataTreatment) newErrors.acceptDataTreatment = 'Debes aceptar el tratamiento de datos';
+      if (!formData.AcceptTerms) newErrors.AcceptTerms = 'Debes aceptar los términos y condiciones';
+      if (!formData.AcceptDataPolicy) newErrors.AcceptDataPolicy = 'Debes aceptar el tratamiento de datos';
     }
 
     setErrors(newErrors);
@@ -150,14 +153,14 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 <User className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  value={formData.Name}
+                  onChange={(e) => setFormData({ ...formData, Name: e.target.value })}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                  style={{ borderColor: errors.name ? '#EF4444' : '#E5E7EB' }}
+                  style={{ borderColor: errors.Name ? '#EF4444' : '#E5E7EB' }}
                   placeholder="Juan Pérez García"
                 />
               </div>
-              {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
+              {errors.Name && <p className="text-xs text-red-500 mt-1">{errors.Name}</p>}
             </div>
 
             <div>
@@ -168,14 +171,14 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 <Mail className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <input
                   type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  value={formData.Email}
+                  onChange={(e) => setFormData({ ...formData, Email: e.target.value })}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                  style={{ borderColor: errors.email ? '#EF4444' : '#E5E7EB' }}
+                  style={{ borderColor: errors.Email ? '#EF4444' : '#E5E7EB' }}
                   placeholder="correo@ejemplo.com"
                 />
               </div>
-              {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+              {errors.Email && <p className="text-xs text-red-500 mt-1">{errors.Email}</p>}
             </div>
 
             <div>
@@ -186,14 +189,14 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <input
                   type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  value={formData.PhoneNumber}
+                  onChange={(e) => setFormData({ ...formData, PhoneNumber: e.target.value })}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                  style={{ borderColor: errors.phone ? '#EF4444' : '#E5E7EB' }}
+                  style={{ borderColor: errors.PhoneNumber ? '#EF4444' : '#E5E7EB' }}
                   placeholder="+57 300 123 4567"
                 />
               </div>
-              {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+              {errors.PhoneNumber && <p className="text-xs text-red-500 mt-1">{errors.PhoneNumber}</p>}
             </div>
 
             <div>
@@ -204,28 +207,28 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 <Calendar className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <input
                   type="date"
-                  value={formData.birthDate}
-                  onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+                  value={formData.DateOfBirth}
+                  onChange={(e) => setFormData({ ...formData, DateOfBirth: e.target.value })}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                  style={{ borderColor: errors.birthDate ? '#EF4444' : '#E5E7EB' }}
+                  style={{ borderColor: errors.DateOfBirth ? '#EF4444' : '#E5E7EB' }}
                 />
               </div>
-              {errors.birthDate && <p className="text-xs text-red-500 mt-1">{errors.birthDate}</p>}
+              {errors.DateOfBirth && <p className="text-xs text-red-500 mt-1">{errors.DateOfBirth}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Género</label>
               <select
-                value={formData.gender}
-                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                value={formData.Gender}
+                onChange={(e) => setFormData({ ...formData, Gender: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
                 style={{ borderColor: '#E5E7EB' }}
               >
                 <option value="">Selecciona una opción</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Femenino">Femenino</option>
-                <option value="Otro">Otro</option>
-                <option value="Prefiero no decir">Prefiero no decir</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+                <option value="O">Otro</option>
+                <option value="N">Prefiero no decir</option>
               </select>
             </div>
           </div>
@@ -245,19 +248,25 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
               <div className="relative">
                 <FileText className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <select
-                  value={formData.documentType}
-                  onChange={(e) => setFormData({ ...formData, documentType: e.target.value })}
+                  value={formData.IdentificationType}
+                  onChange={(e) => setFormData({ ...formData, IdentificationType: e.target.value })}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                  style={{ borderColor: errors.documentType ? '#EF4444' : '#E5E7EB' }}
+                  style={{ borderColor: errors.IdentificationType ? '#EF4444' : '#E5E7EB' }}
                 >
-                  <option value="">Selecciona el tipo</option>
-                  <option value="CC">Cédula de ciudadanía (CC)</option>
-                  <option value="CE">Cédula de extranjería (CE)</option>
-                  <option value="Pasaporte">Pasaporte</option>
-                  <option value="PEP">PEP (Permiso Especial de Permanencia)</option>
+                  <option value=" ">Seleccione un tipo de documento...</option>
+                  <option value="0">Cédula de ciudadanía (CC)</option>
+                  <option value="1">Tarjeta de identidad (TI)</option>
+                  <option value="2">Cédula de extranjería (CE)</option>
+                  <option value="3">Pasaporte (PA)</option>
+                  <option value="4">Registro Civil (RC)</option>
+                  <option value="5">NIT</option>
+                  <option value="6">PEP (Permiso Especial de Permanencia)</option>
+                  <option value="7">Salvoconducto (SC)</option>
+                  <option value="8">Documento de Identificación de Menores (DIM)</option>
+                  <option value="9">Permiso Temporal (TEMP)</option>
                 </select>
               </div>
-              {errors.documentType && <p className="text-xs text-red-500 mt-1">{errors.documentType}</p>}
+              {errors.IdentificationType && <p className="text-xs text-red-500 mt-1">{errors.IdentificationType}</p>}
             </div>
 
             <div>
@@ -266,21 +275,21 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
               </label>
               <input
                 type="text"
-                value={formData.documentNumber}
-                onChange={(e) => setFormData({ ...formData, documentNumber: e.target.value.replace(/\D/g, '') })}
+                value={formData.IdentificationNumber}
+                onChange={(e) => setFormData({ ...formData, IdentificationNumber: e.target.value.replace(/\D/g, '') })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                style={{ borderColor: errors.documentNumber ? '#EF4444' : '#E5E7EB' }}
+                style={{ borderColor: errors.IdentificationNumber ? '#EF4444' : '#E5E7EB' }}
                 placeholder="1234567890"
               />
-              {errors.documentNumber && <p className="text-xs text-red-500 mt-1">{errors.documentNumber}</p>}
+              {errors.IdentificationNumber && <p className="text-xs text-red-500 mt-1">{errors.IdentificationNumber}</p>}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de expedición</label>
               <input
                 type="date"
-                value={formData.documentExpedition}
-                onChange={(e) => setFormData({ ...formData, documentExpedition: e.target.value })}
+                value={formData.IssueDate}
+                onChange={(e) => setFormData({ ...formData, IssueDate: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
                 style={{ borderColor: '#E5E7EB' }}
               />
@@ -290,8 +299,8 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
               <label className="block text-sm font-medium text-gray-700 mb-1">Lugar de expedición</label>
               <input
                 type="text"
-                value={formData.documentPlace}
-                onChange={(e) => setFormData({ ...formData, documentPlace: e.target.value })}
+                value={formData.IssuePlace}
+                onChange={(e) => setFormData({ ...formData, IssuePlace: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
                 style={{ borderColor: '#E5E7EB' }}
                 placeholder="Bogotá D.C."
@@ -313,33 +322,33 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
             <FileUpload
               label="Foto frontal del documento"
               required
-              value={formData.documentFront}
-              onFileSelect={(file) => setFormData({ ...formData, documentFront: file })}
+              value={formData.DocumentFront}
+              onFileSelect={(file) => setFormData({ ...formData, DocumentFront: file })}
               acceptedFormats={['image/jpeg', 'image/png', 'application/pdf']}
               maxSize={5}
             />
-            {errors.documentFront && <p className="text-xs text-red-500 mt-1">{errors.documentFront}</p>}
+            {errors.DocumentFront && <p className="text-xs text-red-500 mt-1">{errors.DocumentFront}</p>}
 
             <FileUpload
               label="Foto reverso del documento"
               required
-              value={formData.documentBack}
-              onFileSelect={(file) => setFormData({ ...formData, documentBack: file })}
+              value={formData.DocumentBack}
+              onFileSelect={(file) => setFormData({ ...formData, DocumentBack: file })}
               acceptedFormats={['image/jpeg', 'image/png', 'application/pdf']}
               maxSize={5}
             />
-            {errors.documentBack && <p className="text-xs text-red-500 mt-1">{errors.documentBack}</p>}
+            {errors.DocumentBack && <p className="text-xs text-red-500 mt-1">{errors.DocumentBack}</p>}
 
             <FileUpload
               label="Selfie con documento"
               required
-              value={formData.selfieWithDocument}
-              onFileSelect={(file) => setFormData({ ...formData, selfieWithDocument: file })}
+              value={formData.SelfieWithDocument}
+              onFileSelect={(file) => setFormData({ ...formData, SelfieWithDocument: file })}
               acceptedFormats={['image/jpeg', 'image/png']}
               maxSize={5}
               hint="Toma una foto sosteniendo tu documento junto a tu rostro"
             />
-            {errors.selfieWithDocument && <p className="text-xs text-red-500 mt-1">{errors.selfieWithDocument}</p>}
+            {errors.SelfieWithDocument && <p className="text-xs text-red-500 mt-1">{errors.SelfieWithDocument}</p>}
           </div>
         );
 
@@ -358,14 +367,14 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  value={formData.Address}
+                  onChange={(e) => setFormData({ ...formData, Address: e.target.value })}
                   className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                  style={{ borderColor: errors.address ? '#EF4444' : '#E5E7EB' }}
+                  style={{ borderColor: errors.Address ? '#EF4444' : '#E5E7EB' }}
                   placeholder="Calle 123 #45-67"
                 />
               </div>
-              {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
+              {errors.Address && <p className="text-xs text-red-500 mt-1">{errors.Address}</p>}
             </div>
 
             <div>
@@ -373,17 +382,17 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 Ciudad <span className="text-red-500">*</span>
               </label>
               <select
-                value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                value={formData.City}
+                onChange={(e) => setFormData({ ...formData, City: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                style={{ borderColor: errors.city ? '#EF4444' : '#E5E7EB' }}
+                style={{ borderColor: errors.City ? '#EF4444' : '#E5E7EB' }}
               >
                 <option value="">Selecciona una ciudad</option>
-                {colombianCities.map(city => (
-                  <option key={city} value={city}>{city}</option>
+                {colombianCities.map(City => (
+                  <option key={City} value={City}>{City}</option>
                 ))}
               </select>
-              {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
+              {errors.City && <p className="text-xs text-red-500 mt-1">{errors.City}</p>}
             </div>
 
             <div>
@@ -391,17 +400,17 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 Departamento <span className="text-red-500">*</span>
               </label>
               <select
-                value={formData.department}
-                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                value={formData.Department}
+                onChange={(e) => setFormData({ ...formData, Department: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                style={{ borderColor: errors.department ? '#EF4444' : '#E5E7EB' }}
+                style={{ borderColor: errors.Department ? '#EF4444' : '#E5E7EB' }}
               >
                 <option value="">Selecciona un departamento</option>
                 {colombianDepartments.map(dept => (
                   <option key={dept} value={dept}>{dept}</option>
                 ))}
               </select>
-              {errors.department && <p className="text-xs text-red-500 mt-1">{errors.department}</p>}
+              {errors.Department && <p className="text-xs text-red-500 mt-1">{errors.Department}</p>}
             </div>
 
             <div>
@@ -410,8 +419,8 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
               </label>
               <input
                 type="text"
-                value={formData.postalCode}
-                onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
+                value={formData.PostalCode}
+                onChange={(e) => setFormData({ ...formData, PostalCode: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
                 style={{ borderColor: '#E5E7EB' }}
                 placeholder="110111"
@@ -421,7 +430,7 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
         );
 
       case 5:
-        const passwordStrength = formData.password ? getPasswordStrength(formData.password) : null;
+        const passwordStrength = formData.Password ? getPasswordStrength(formData.Password) : null;
 
         return (
           <div className="space-y-4">
@@ -437,10 +446,10 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  value={formData.Password}
+                  onChange={(e) => setFormData({ ...formData, Password: e.target.value })}
                   className="w-full pl-10 pr-12 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                  style={{ borderColor: errors.password ? '#EF4444' : '#E5E7EB' }}
+                  style={{ borderColor: errors.Password ? '#EF4444' : '#E5E7EB' }}
                   placeholder="••••••••"
                 />
                 <button
@@ -472,7 +481,7 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
               <p className="text-xs text-gray-500 mt-1">
                 Mínimo 8 caracteres, 1 mayúscula, 1 número, 1 carácter especial
               </p>
-              {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
+              {errors.Password && <p className="text-xs text-red-500 mt-1">{errors.Password}</p>}
             </div>
 
             <div>
@@ -482,11 +491,11 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
               <div className="relative">
                 <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  type={showConfirmPassword ? 'text' : 'Password'}
+                  value={formData.ConfirmPassword}
+                  onChange={(e) => setFormData({ ...formData, ConfirmPassword: e.target.value })}
                   className="w-full pl-10 pr-12 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                  style={{ borderColor: errors.confirmPassword ? '#EF4444' : formData.confirmPassword && formData.password === formData.confirmPassword ? '#10B981' : '#E5E7EB' }}
+                  style={{ borderColor: errors.ConfirmPassword ? '#EF4444' : formData.ConfirmPassword && formData.Password === formData.ConfirmPassword ? '#10B981' : '#E5E7EB' }}
                   placeholder="••••••••"
                 />
                 <button
@@ -496,11 +505,11 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 >
                   {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
-                {formData.confirmPassword && formData.password === formData.confirmPassword && (
+                {formData.ConfirmPassword && formData.Password === formData.ConfirmPassword && (
                   <Check className="absolute right-12 top-3 w-5 h-5 text-green-500" />
                 )}
               </div>
-              {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>}
+              {errors.ConfirmPassword && <p className="text-xs text-red-500 mt-1">{errors.ConfirmPassword}</p>}
             </div>
 
             <div>
@@ -508,18 +517,18 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 Pregunta de seguridad <span className="text-red-500">*</span>
               </label>
               <select
-                value={formData.securityQuestion}
-                onChange={(e) => setFormData({ ...formData, securityQuestion: e.target.value })}
+                value={formData.SecurityQuestion}
+                onChange={(e) => setFormData({ ...formData, SecurityQuestion: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                style={{ borderColor: errors.securityQuestion ? '#EF4444' : '#E5E7EB' }}
+                style={{ borderColor: errors.SecurityQuestion ? '#EF4444' : '#E5E7EB' }}
               >
                 <option value="">Selecciona una pregunta</option>
-                <option value="mascota">¿Nombre de tu primera mascota?</option>
-                <option value="ciudad">¿Ciudad donde naciste?</option>
-                <option value="amigo">¿Nombre de tu mejor amigo de infancia?</option>
-                <option value="comida">¿Comida favorita?</option>
+                <option value="0">¿Nombre de tu primera mascota?</option>
+                <option value="1">¿Ciudad donde naciste?</option>
+                <option value="2">¿Nombre de tu mejor amigo de infancia?</option>
+                <option value="3">¿Comida favorita?</option>
               </select>
-              {errors.securityQuestion && <p className="text-xs text-red-500 mt-1">{errors.securityQuestion}</p>}
+              {errors.SecurityQuestion && <p className="text-xs text-red-500 mt-1">{errors.SecurityQuestion}</p>}
             </div>
 
             <div>
@@ -528,13 +537,13 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
               </label>
               <input
                 type="text"
-                value={formData.securityAnswer}
-                onChange={(e) => setFormData({ ...formData, securityAnswer: e.target.value })}
+                value={formData.SecurityAnswer}
+                onChange={(e) => setFormData({ ...formData, SecurityAnswer: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
-                style={{ borderColor: errors.securityAnswer ? '#EF4444' : '#E5E7EB' }}
+                style={{ borderColor: errors.SecurityAnswer ? '#EF4444' : '#E5E7EB' }}
                 placeholder="Tu respuesta"
               />
-              {errors.securityAnswer && <p className="text-xs text-red-500 mt-1">{errors.securityAnswer}</p>}
+              {errors.SecurityAnswer && <p className="text-xs text-red-500 mt-1">{errors.SecurityAnswer}</p>}
             </div>
           </div>
         );
@@ -547,12 +556,12 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
             </h3>
 
             <div className="space-y-3">
-              <div className="border rounded-lg p-4" style={{ borderColor: errors.acceptTerms ? '#EF4444' : '#E5E7EB' }}>
+              <div className="border rounded-lg p-4" style={{ borderColor: errors.AcceptTerms ? '#EF4444' : '#E5E7EB' }}>
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={formData.acceptTerms}
-                    onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
+                    checked={formData.AcceptTerms}
+                    onChange={(e) => setFormData({ ...formData, AcceptTerms: e.target.checked })}
                     className="mt-1"
                   />
                   <span className="text-sm text-gray-700">
@@ -563,15 +572,15 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                     <span className="text-red-500">*</span>
                   </span>
                 </label>
-                {errors.acceptTerms && <p className="text-xs text-red-500 mt-1 ml-7">{errors.acceptTerms}</p>}
+                {errors.AcceptTerms && <p className="text-xs text-red-500 mt-1 ml-7">{errors.AcceptTerms}</p>}
               </div>
 
-              <div className="border rounded-lg p-4" style={{ borderColor: errors.acceptDataTreatment ? '#EF4444' : '#E5E7EB' }}>
+              <div className="border rounded-lg p-4" style={{ borderColor: errors.AcceptDataPolicy ? '#EF4444' : '#E5E7EB' }}>
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={formData.acceptDataTreatment}
-                    onChange={(e) => setFormData({ ...formData, acceptDataTreatment: e.target.checked })}
+                    checked={formData.AcceptDataPolicy}
+                    onChange={(e) => setFormData({ ...formData, AcceptDataPolicy: e.target.checked })}
                     className="mt-1"
                   />
                   <span className="text-sm text-gray-700">
@@ -582,15 +591,15 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                     <span className="text-red-500">*</span>
                   </span>
                 </label>
-                {errors.acceptDataTreatment && <p className="text-xs text-red-500 mt-1 ml-7">{errors.acceptDataTreatment}</p>}
+                {errors.AcceptDataPolicy && <p className="text-xs text-red-500 mt-1 ml-7">{errors.AcceptDataPolicy}</p>}
               </div>
 
               <div className="border rounded-lg p-4" style={{ borderColor: '#E5E7EB' }}>
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={formData.receiveNotifications}
-                    onChange={(e) => setFormData({ ...formData, receiveNotifications: e.target.checked })}
+                    checked={formData.WantsNotifications}
+                    onChange={(e) => setFormData({ ...formData, WantsNotifications: e.target.checked })}
                     className="mt-1"
                   />
                   <span className="text-sm text-gray-700">
@@ -661,6 +670,13 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
               Completa todos los pasos para crear tu cuenta en ManosAmigas
             </p>
           </div>
+          
+          {apiError && (
+            <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 border border-red-200 rounded-lg mb-4">
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <p>{apiError}</p>
+            </div>
+          )}
 
           {renderStep()}
         </div>

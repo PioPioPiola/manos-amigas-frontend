@@ -7,6 +7,7 @@ export interface User {
   email: string;
   telefono: string;
   fecha_nacimiento: string;
+  genero: string;
   rol: string;
   estado_cuenta: string;
   direccion?: string;
@@ -21,30 +22,55 @@ export interface User {
 }
 
 export interface RegisterFormData {
-  name: string;
-  email: string;
-  phone: string;
-  birthDate: string;
-  gender: string;
-  documentType: string;
-  documentNumber: string;
-  documentExpedition: string;
-  documentPlace: string;
-  documentFront: File | null;
-  documentBack: File | null;
-  selfieWithDocument: File | null;
-  address: string;
-  city: string;
-  department: string;
-  postalCode?: string;
-  password: string;
-  confirmPassword: string;
-  securityQuestion: string;
-  securityAnswer: string;
-  acceptTerms: boolean;
-  acceptDataTreatment: boolean;
-  receiveNotifications: boolean;
+  Email: string;
+  Password: string;
+  Name: string;
+  IdentificationType: string;
+  IdentificationNumber: string;
+  PhoneNumber: string;
+  DateOfBirth: string;
+  Role?: string;
+  Gender?: string;
+  DocTypeId: number;
+  IssueDate: string;
+  IssuePlace: string;
+  DocumentFront: File | null;
+  DocumentBack: File | null;
+  SelfieWithDocument: File | null;
+  Address: string;
+  City: string;
+  Department: string;
+  PostalCode?: string;
+  SecurityQuestion: string;
+  SecurityAnswer: string;
+  AcceptTerms: boolean;
+  AcceptDataPolicy: boolean;
+  WantsNotifications: boolean;
+  ConfirmPassword: string;
 }
+
+// export interface RegisterFormData {
+//   name: string;
+//   email: string;
+//   phone: string;
+//   birthDate: string;
+//   gender: string;
+//   documentType: string;
+//   documentNumber: string;
+//   documentExpedition: string;
+//   documentPlace: string;
+//   address: string;
+//   city: string;
+//   department: string;
+//   postalCode?: string;
+//   password: string;
+//   confirmPassword: string;
+//   securityQuestion: string;
+//   securityAnswer: string;
+//   acceptTerms: boolean;
+//   acceptDataTreatment: boolean;
+//   receiveNotifications: boolean;
+// }
 
 export interface DocumentoPersona {
   persona_id: string;
@@ -58,3 +84,5 @@ export interface DocumentoPersona {
   observaciones?: string;
   tipodoc_id: number;
 }
+
+export const TYPES_LOADED = true;

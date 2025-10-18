@@ -58,7 +58,7 @@ function App() {
 
   const handleLogout = () => {
     setUser(null);
-    setCurrentView('home');
+    setCurrentView('login');
     showNotification('Sesión cerrada correctamente', 'success');
   };
 

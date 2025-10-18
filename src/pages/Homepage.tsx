@@ -176,7 +176,7 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
                   </li>
                 </ul>
                 <button onClick={onGoToLogin} className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
-                  Solicitar ahora
+                  Solicitar ahora {/*TO DO: Colocar en un componente la tarjeta para hacerla dinámica. OCnsiderar carrucel con bloque de tres*/}
                 </button>
               </div>
 
