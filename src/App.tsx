@@ -2,10 +2,11 @@ import { useState } from 'react';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Homepage from './pages/Homepage';
+import Pending from './pages/Pending';
 import { User, RegisterFormData } from './types/User';
 import { authService } from './services/authService';
 
-type ViewType = 'home' | 'login' | 'register';
+type ViewType = 'home' | 'login' | 'register' | 'pending';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -25,8 +26,17 @@ function App() {
 
       if (result.success && result.user) {
         setUser(result.user);
-        setCurrentView('home');
-        showNotification(`¡Bienvenido de nuevo, ${result.user.nombres}!`, 'success');
+
+        if (result.user.estado_cuenta === 'Pendiente verificación') {
+          setCurrentView('pending');
+          showNotification('Tu cuenta está pendiente de verificación', 'error');
+        } else if (result.user.estado_cuenta === 'Verificado') {
+          setCurrentView('home');
+          showNotification(`¡Bienvenido de nuevo, ${result.user.nombres}!`, 'success');
+        } else {
+          setCurrentView('home');
+          showNotification(`¡Bienvenido de nuevo, ${result.user.nombres}!`, 'success');
+        }
       } else {
         showNotification(result.error || 'Error al iniciar sesión', 'error');
       }
@@ -44,8 +54,8 @@ function App() {
 
       if (result.success && result.user) {
         setUser(result.user);
-        setCurrentView('home');
-        showNotification(`¡Registro exitoso! Bienvenido a ManosAmigas, ${result.user.nombres}`, 'success');
+        setCurrentView('pending');
+        showNotification(`¡Registro exitoso! Tu cuenta está en proceso de verificación`, 'success');
       } else {
         showNotification(result.error || 'Error al registrar usuario', 'error');
       }
@@ -122,6 +132,10 @@ function App() {
           onBackToLogin={() => setCurrentView('login')}
           isLoading={isLoading}
         />
+      )}
+
+      {currentView === 'pending' && (
+        <Pending onBackToHome={handleBackToHome} />
       )}
     </div>
   );

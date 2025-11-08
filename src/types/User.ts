@@ -9,7 +9,7 @@ export interface User {
   fecha_nacimiento: string;
   genero: string;
   rol: string;
-  estado_cuenta: string;
+  estado_cuenta: 'Pendiente verificación' | 'Verificado' | string;
   direccion?: string;
   ciudad?: string;
   departamento?: string;

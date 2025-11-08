@@ -3,11 +3,12 @@ import { User, RegisterFormData } from "../types/User.ts";
 
 type AuthSuccessResponse = {
     token: string;
-    id: string; 
+    id: string;
     email: string;
     name: string;
     rol: string;
     gender: string;
+    estado_cuenta?: string;
 };
 
 type AuthResult = { success: boolean; user?: User; error?: string };
@@ -15,16 +16,16 @@ type AuthResult = { success: boolean; user?: User; error?: string };
 const mapApiResponseToUser = (apiData: Omit<AuthSuccessResponse, 'token'>): User => {
     return {
         persona_id: apiData.id,
-        nombres: apiData.name, 
-        apellidos: "", 
-        tipo_identificacion: "", 
-        numero_identificacion: "", 
+        nombres: apiData.name,
+        apellidos: "",
+        tipo_identificacion: "",
+        numero_identificacion: "",
         email: apiData.email,
-        telefono: "", 
-        fecha_nacimiento: "", 
+        telefono: "",
+        fecha_nacimiento: "",
         genero: apiData.gender,
         rol: apiData.rol,
-        estado_cuenta: "Pendiente verificación",
+        estado_cuenta: apiData.estado_cuenta || "Pendiente verificación",
         direccion: undefined,
         ciudad: undefined,
         departamento: undefined,
