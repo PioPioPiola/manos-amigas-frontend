@@ -1,5 +1,6 @@
-import { Moon, Wrench, Home, Users, Clock, Shield, MapPin, User as UserIcon } from 'lucide-react';
+import { Moon, Clock, Shield, MapPin, User as UserIcon } from 'lucide-react';
 import { User } from '../types/User';
+import ServicesCarousel from './ServicesCarousel';
 
 interface HomepageProps {
   user: User | null;
@@ -139,103 +140,7 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
           </div>
         </section>
 
-        <section id="servicios" className="py-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Nuestros <span style={{ color: '#7ECBF2' }}>Servicios</span>
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                  Soluciones puntuales para tus tareas diarias. Si es importante para ti, es importante para nosotros.
-                </p>
-              </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white rounded-2xl p-8 border border-gray-200 hover:shadow-xl transition-all hover:-translate-y-1 group">
-                <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform" style={{ backgroundColor: '#2E4A73' }}>
-                  <Wrench className="w-8 h-8 text-white" />
-                  </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  Asistencia y Reparaciones en el hogar
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Soluciones técnicas rápidas y seguras
-                </p>
-                <ul className="space-y-3 mb-8 text-sm text-gray-600">
-                  <li className="flex items-start">
-                    <span className="mr-2" style={{ color: '#7ECBF2' }}>•</span>
-                    Tarifas transparentes
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2" style={{ color: '#7ECBF2' }}>•</span>
-                    Profesionales verificados
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2" style={{ color: '#7ECBF2' }}>•</span>
-                    Máxima disponibilidad
-                  </li>
-                </ul>
-                <button onClick={onGoToLogin} className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
-                  Solicitar ahora {/*TO DO: Colocar en un componente la tarjeta para hacerla dinámica. OCnsiderar carrucel con bloque de tres*/}
-                </button>
-              </div>
-
-              <div className="bg-white rounded-2xl p-8 border border-gray-200 hover:shadow-xl transition-all hover:-translate-y-1 group">
-                <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform" style={{ backgroundColor: '#7ECBF2' }}>
-                  <Home className="w-8 h-8 text-white" />
-                  </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  Tareas del hogar y Apoyo a domicilio
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Simplifica tu día a día con ayuda confiable
-                </p>
-                <ul className="space-y-3 mb-8 text-sm text-gray-600">
-                  <li className="flex items-start">
-                    <span className="mr-2" style={{ color: '#7ECBF2' }}>•</span>
-                    Cuidado personal y de mascotas
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2" style={{ color: '#7ECBF2' }}>•</span>
-                    Personas confiables con disposición de ayudar
-                  </li>
-                </ul>
-                <button onClick={onGoToLogin} className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
-                  Solicitar ahora
-                </button>
-              </div>
-
-              <div className="bg-white rounded-2xl p-8 border border-gray-200 hover:shadow-xl transition-all hover:-translate-y-1 group">
-                <div className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform" style={{ backgroundColor: '#A8D8EA' }}>
-                  <Users className="w-8 h-8 text-white" />
-                  </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  Acompañamiento en trámites
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Hacer vueltas en compañía, será más fácil y sencillo
-                </p>
-                <ul className="space-y-3 mb-8 text-sm text-gray-600">
-                  <li className="flex items-start">
-                    <span className="mr-2" style={{ color: '#7ECBF2' }}>•</span>
-                    Guía para realizar procesos
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2" style={{ color: '#7ECBF2' }}>•</span>
-                    Realización de trámites por terceros
-                  </li>
-                  <li className="flex items-start">
-                    <span className="mr-2" style={{ color: '#7ECBF2' }}>•</span>
-                    Acompañamiento presencial en procesos
-                  </li>
-                </ul>
-                <button onClick={onGoToLogin} className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
-                  Solicitar ahora
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
+        <ServicesCarousel onGoToLogin={onGoToLogin} />
 
         <section className="py-20" style={{ backgroundColor: '#E8F4F8' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -319,7 +224,7 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
                 <span className="text-xl font-semibold">ManosAmigas</span>
               </div>
               <p className="text-white opacity-90 text-sm leading-relaxed mb-4">
-                  “Pedir una mano simplifica tu vida, brindar la tuya transforma la del otro.”
+                  "Pedir una mano simplifica tu vida, brindar la tuya transforma la del otro."
                 </p>
               </div>
 
