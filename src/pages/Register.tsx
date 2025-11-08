@@ -106,6 +106,7 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
       if (!formData.ConfirmPassword) newErrors.ConfirmPassword = 'Confirma tu contraseña';
       else if (formData.Password !== formData.ConfirmPassword) newErrors.ConfirmPassword = 'Las contraseñas no coinciden';
 
+      if (!formData.Role) newErrors.Role = 'Selecciona un rol';
       if (!formData.SecurityQuestion) newErrors.SecurityQuestion = 'Selecciona una pregunta de seguridad';
       if (!formData.SecurityAnswer.trim()) newErrors.SecurityAnswer = 'La respuesta es requerida';
     }
@@ -510,6 +511,23 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
                 )}
               </div>
               {errors.ConfirmPassword && <p className="text-xs text-red-500 mt-1">{errors.ConfirmPassword}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Rol <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={formData.Role}
+                onChange={(e) => setFormData({ ...formData, Role: e.target.value })}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-400"
+                style={{ borderColor: errors.Role ? '#EF4444' : '#E5E7EB' }}
+              >
+                <option value="">Selecciona un rol</option>
+                <option value="0">Solicitante</option>
+                <option value="1">Prestador</option>
+              </select>
+              {errors.Role && <p className="text-xs text-red-500 mt-1">{errors.Role}</p>}
             </div>
 
             <div>
