@@ -3,10 +3,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Homepage from './pages/Homepage';
 import Pending from './pages/Pending';
+import SolicitanteDashboard from './pages/SolicitanteDashboard';
+import PrestadorDashboard from './pages/PrestadorDashboard';
 import { User, RegisterFormData } from './types/User';
 import { authService } from './services/authService';
 
-type ViewType = 'home' | 'login' | 'register' | 'pending';
+type ViewType = 'home' | 'login' | 'register' | 'pending' | 'solicitanteDashboard' | 'prestadorDashboard';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -31,10 +33,22 @@ function App() {
           setCurrentView('pending');
           showNotification('Tu cuenta está pendiente de verificación', 'error');
         } else if (result.user.estado_cuenta === 'Verificado') {
-          setCurrentView('home');
+          if (result.user.rol === '0') {
+            setCurrentView('solicitanteDashboard');
+          } else if (result.user.rol === '1') {
+            setCurrentView('prestadorDashboard');
+          } else {
+            setCurrentView('home');
+          }
           showNotification(`¡Bienvenido de nuevo, ${result.user.nombres}!`, 'success');
         } else {
-          setCurrentView('home');
+          if (result.user.rol === '0') {
+            setCurrentView('solicitanteDashboard');
+          } else if (result.user.rol === '1') {
+            setCurrentView('prestadorDashboard');
+          } else {
+            setCurrentView('home');
+          }
           showNotification(`¡Bienvenido de nuevo, ${result.user.nombres}!`, 'success');
         }
       } else {
@@ -68,8 +82,12 @@ function App() {
 
   const handleLogout = () => {
     setUser(null);
-    setCurrentView('login');
+    setCurrentView('home');
     showNotification('Sesión cerrada correctamente', 'success');
+  };
+
+  const handleCreateService = () => {
+    showNotification('Funcionalidad de crear servicio próximamente', 'success');
   };
 
   const handleGoToLogin = () => {
@@ -136,6 +154,21 @@ function App() {
 
       {currentView === 'pending' && (
         <Pending onBackToHome={handleBackToHome} />
+      )}
+
+      {currentView === 'solicitanteDashboard' && user && (
+        <SolicitanteDashboard
+          user={user}
+          onLogout={handleLogout}
+          onCreateService={handleCreateService}
+        />
+      )}
+
+      {currentView === 'prestadorDashboard' && user && (
+        <PrestadorDashboard
+          user={user}
+          onLogout={handleLogout}
+        />
       )}
     </div>
   );
