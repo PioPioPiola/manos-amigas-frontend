@@ -6,9 +6,10 @@ interface HomepageProps {
   user: User | null;
   onGoToLogin: () => void;
   onLogout: () => void;
+  onGoToServiceSearch: () => void;
 }
 
-export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps) {
+export default function Homepage({ user, onGoToLogin, onLogout, onGoToServiceSearch }: HomepageProps) {
 
   return (
     <div className="min-h-screen bg-white">
@@ -21,8 +22,11 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
                   <span className="text-xl font-semibold" style={{ color: '#7ECBF2' }}>ManosAmigas</span>
                 </div>
                 <nav className="hidden md:flex space-x-8">
+                  <button onClick={onGoToServiceSearch} className="text-gray-600 hover:text-sky-400 transition-colors text-sm">
+                    Buscar Servicios
+                  </button>
                   <a href="#servicios" className="text-gray-600 hover:text-sky-400 transition-colors text-sm">
-                    Servicios
+                    Categorías
                   </a>
                 </nav>
               </div>
@@ -103,11 +107,11 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
                 </div>
 
                 <div className="flex flex-wrap gap-4">
-                  <button onClick={onGoToLogin} className="text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all text-sm" style={{ backgroundColor: '#7ECBF2' } }>
-                    Solicitar servicio ahora →
+                  <button onClick={onGoToServiceSearch} className="text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-all text-sm" style={{ backgroundColor: '#7ECBF2' } }>
+                    Buscar servicios ahora →
                   </button>
-                  <button className="px-8 py-3 rounded-lg font-semibold hover:bg-sky-50 transition-colors text-sm" style={{ border: '1px solid #7ECBF2', color: '#7ECBF2' }}>
-                    Conocer más
+                  <button onClick={() => document.getElementById('servicios')?.scrollIntoView({ behavior: 'smooth' })} className="px-8 py-3 rounded-lg font-semibold hover:bg-sky-50 transition-colors text-sm" style={{ border: '1px solid #7ECBF2', color: '#7ECBF2' }}>
+                    Ver categorías
                   </button>
                 </div>
 
@@ -140,7 +144,7 @@ export default function Homepage({ user, onGoToLogin, onLogout }: HomepageProps)
           </div>
         </section>
 
-        <ServicesCarousel onGoToLogin={onGoToLogin} />
+        <ServicesCarousel onGoToServiceSearch={onGoToServiceSearch} />
 
         <section className="py-20" style={{ backgroundColor: '#E8F4F8' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -11,10 +11,10 @@ interface Service {
 }
 
 interface ServicesCarouselProps {
-  onGoToLogin: () => void;
+  onGoToServiceSearch: () => void;
 }
 
-const ServicesCarousel: React.FC<ServicesCarouselProps> = ({ onGoToLogin }) => {
+const ServicesCarousel: React.FC<ServicesCarouselProps> = ({ onGoToServiceSearch }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const services: Service[] = [
@@ -150,11 +150,11 @@ const ServicesCarousel: React.FC<ServicesCarouselProps> = ({ onGoToLogin }) => {
                     ))}
                   </ul>
                   <button
-                    onClick={onGoToLogin}
+                    onClick={onGoToServiceSearch}
                     className="w-full py-3 rounded-lg font-semibold hover:opacity-90 transition-colors text-sm mt-auto"
                     style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}
                   >
-                    Solicitar ahora
+                    Ver servicios
                   </button>
                 </div>
               );

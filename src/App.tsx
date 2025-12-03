@@ -5,10 +5,11 @@ import Homepage from './pages/Homepage';
 import Pending from './pages/Pending';
 import SolicitanteDashboard from './pages/SolicitanteDashboard';
 import PrestadorDashboard from './pages/PrestadorDashboard';
+import ServiceResults from './pages/ServiceResults';
 import { User, RegisterFormData } from './types/User';
 import { authService } from './services/authService';
 
-type ViewType = 'home' | 'login' | 'register' | 'pending' | 'solicitanteDashboard' | 'prestadorDashboard';
+type ViewType = 'home' | 'login' | 'register' | 'pending' | 'solicitanteDashboard' | 'prestadorDashboard' | 'serviceResults';
 
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -102,6 +103,10 @@ function App() {
     setCurrentView('home');
   };
 
+  const handleGoToServiceSearch = () => {
+    setCurrentView('serviceResults');
+  };
+
   return (
     <div className="relative">
       {notification && (
@@ -132,6 +137,7 @@ function App() {
           user={user}
           onGoToLogin={handleGoToLogin}
           onLogout={handleLogout}
+          onGoToServiceSearch={handleGoToServiceSearch}
         />
       )}
 
@@ -168,6 +174,14 @@ function App() {
         <PrestadorDashboard
           user={user}
           onLogout={handleLogout}
+        />
+      )}
+
+      {currentView === 'serviceResults' && (
+        <ServiceResults
+          onBackToHome={handleBackToHome}
+          onGoToLogin={handleGoToLogin}
+          isLoggedIn={!!user}
         />
       )}
     </div>
