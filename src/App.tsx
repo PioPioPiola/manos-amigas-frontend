@@ -28,7 +28,7 @@ function App() {
         if (result.user.estado_cuenta === 'U') {
           setCurrentView('pending');
           showNotification('Tu cuenta está pendiente de verificación', 'error');
-        } else if (result.user.rol === '0' && result.user.estado_cuenta === 'V') {
+        } else if (result.user.rol === '0') {
           setCurrentView('adminDashboard');
           showNotification(`¡Bienvenido de nuevo, ${result.user.nombres}!`, 'success');
         } else {
