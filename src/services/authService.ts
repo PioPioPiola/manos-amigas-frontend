@@ -8,7 +8,7 @@ type AuthSuccessResponse = {
     name: string;
     rol: string;
     gender: string;
-    estado_cuenta?: string;
+    account_status?: string;
 };
 
 type AuthResult = { success: boolean; user?: User; error?: string };
@@ -25,7 +25,7 @@ const mapApiResponseToUser = (apiData: Omit<AuthSuccessResponse, 'token'>): User
         fecha_nacimiento: "",
         genero: apiData.gender,
         rol: apiData.rol,
-        estado_cuenta: apiData.estado_cuenta || "Pendiente verificación",
+        estado_cuenta: apiData.account_status || "U",
         direccion: undefined,
         ciudad: undefined,
         departamento: undefined,
