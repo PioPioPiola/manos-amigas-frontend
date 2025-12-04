@@ -9,7 +9,7 @@ export interface User {
   fecha_nacimiento: string;
   genero: string;
   rol: string;
-  estado_cuenta: 'Pendiente verificación' | 'Verificado' | string;
+  estado_cuenta: 'U' | 'V' | 'S' | string;
   direccion?: string;
   ciudad?: string;
   departamento?: string;
@@ -19,6 +19,10 @@ export interface User {
   aceptar_terminos: boolean;
   aceptar_datos: boolean;
   recibir_notificaciones: boolean;
+}
+
+export interface UpdateAccountStatusDTO {
+  accountStatus: 'V' | 'S';
 }
 
 export interface RegisterFormData {

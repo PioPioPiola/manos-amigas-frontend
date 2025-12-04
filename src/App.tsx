@@ -6,9 +6,10 @@ import Pending from './pages/Pending';
 import SolicitanteDashboard from './pages/SolicitanteDashboard';
 import PrestadorDashboard from './pages/PrestadorDashboard';
 import ServiceResults from './pages/ServiceResults';
+import AdminUserAccounts from './pages/AdminUserAccounts';
 import { User, RegisterFormData } from './types/User';
 import { authService } from './services/authService';
-type ViewType = 'home' | 'login' | 'register' | 'pending' | 'solicitanteDashboard' | 'prestadorDashboard' | 'serviceResults';
+type ViewType = 'home' | 'login' | 'register' | 'pending' | 'solicitanteDashboard' | 'prestadorDashboard' | 'serviceResults' | 'adminDashboard';
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
   const [user, setUser] = useState<User | null>(null);
@@ -27,6 +28,9 @@ function App() {
         if (result.user.estado_cuenta === 'U') {
           setCurrentView('pending');
           showNotification('Tu cuenta está pendiente de verificación', 'error');
+        } else if (result.user.rol === '0' && result.user.estado_cuenta === 'V') {
+          setCurrentView('adminDashboard');
+          showNotification(`¡Bienvenido de nuevo, ${result.user.nombres}!`, 'success');
         } else {
           setCurrentView('home');
           showNotification(`¡Bienvenido de nuevo, ${result.user.nombres}!`, 'success');
@@ -43,7 +47,9 @@ function App() {
 
   const handleGoToDashboard = () => {
     if (user) {
-      if (user.rol === '1') {
+      if (user.rol === '0') {
+        setCurrentView('adminDashboard');
+      } else if (user.rol === '1') {
         setCurrentView('solicitanteDashboard');
       } else if (user.rol === '2') {
         setCurrentView('prestadorDashboard');
@@ -170,6 +176,16 @@ function App() {
           onGoToDashboard={handleGoToDashboard}
           onGoToLogin={handleGoToLogin}
           isLoggedIn={!!user}
+        />
+      )}
+      {currentView === 'adminDashboard' && user && (
+<AdminUserAccounts
+          user={user}
+          onBackToHome={handleBackToHome}
+          onLogout={handleLogout}
+          onGoToLogin={handleGoToLogin}
+          onGoToDashboard={handleGoToDashboard}
+          onGoToServiceSearch={handleGoToServiceSearch}
         />
       )}
 </div>

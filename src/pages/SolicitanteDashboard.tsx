@@ -52,7 +52,16 @@ export default function SolicitanteDashboard({ user, onLogout, onBackToHome, onG
 
   const getRoleName = () => {
     if (!user) return '';
-    return user.rol === '0' ? 'Solicitante' : 'Prestador';
+    switch (user.rol) {
+      case '0':
+        return 'Administrador';
+      case '1':
+        return 'Solicitante';
+      case '2':
+        return 'Prestador';
+      default:
+        return 'Usuario';
+    }
   };
 
   const fetchServices = async () => {
