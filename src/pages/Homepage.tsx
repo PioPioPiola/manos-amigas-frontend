@@ -1,15 +1,36 @@
-import { Moon, Clock, Shield, MapPin, User as UserIcon } from 'lucide-react';
+import { Moon, Clock, Shield, MapPin, User as UserIcon, LayoutDashboard, Settings, LogOut, ChevronDown } from 'lucide-react';
 import { User } from '../types/User';
 import ServicesCarousel from './ServicesCarousel';
+import { useState, useRef, useEffect } from 'react';
 
 interface HomepageProps {
   user: User | null;
   onGoToLogin: () => void;
   onLogout: () => void;
   onGoToServiceSearch: () => void;
+  onGoToDashboard: () => void;
+  onBackToHome: () => void;
 }
 
-export default function Homepage({ user, onGoToLogin, onLogout, onGoToServiceSearch }: HomepageProps) {
+export default function Homepage({ user, onGoToLogin, onLogout, onGoToServiceSearch, onGoToDashboard, onBackToHome }: HomepageProps) {
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const getRoleName = () => {
+    if (!user) return '';
+    return user.rol === '0' ? 'Solicitante' : 'Prestador';
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -18,8 +39,8 @@ export default function Homepage({ user, onGoToLogin, onLogout, onGoToServiceSea
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center space-x-8">
                 <div className="flex items-center space-x-2">
-                  <img src="/LogoColor.png" alt="ManosAmigas" className="h-10 w-10" />
-                  <span className="text-xl font-semibold" style={{ color: '#7ECBF2' }}>ManosAmigas</span>
+                  <img onClick={onBackToHome} src="/LogoColor.png" alt="ManosAmigas" className="h-10 w-10" style={{ cursor: 'pointer' }} />
+                  <span onClick={onBackToHome} className="text-xl font-semibold" style={{ color: '#7ECBF2', cursor: 'pointer' }}>ManosAmigas</span>
                 </div>
                 <nav className="hidden md:flex space-x-8">
                   <button onClick={onGoToServiceSearch} className="text-gray-600 hover:text-sky-400 transition-colors text-sm">
@@ -40,8 +61,11 @@ export default function Homepage({ user, onGoToLogin, onLogout, onGoToServiceSea
                 </button>
 
                 {user ? (
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
+                  <div className="relative" ref={menuRef}>
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="flex items-center gap-3 hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors"
+                    >
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm"
                         style={{
@@ -50,16 +74,60 @@ export default function Homepage({ user, onGoToLogin, onLogout, onGoToServiceSea
                       >
                         {user.nombres.charAt(0).toUpperCase()}
                       </div>
-                      <span className="text-sm text-gray-700 hidden md:block">
-                        Hola, {user.nombres}
-                      </span>
-                    </div>
-                    <button
-                      onClick={onLogout}
-                      className="text-sm text-gray-600 hover:text-sky-400 transition-colors"
-                    >
-                      Cerrar sesión
+                      <div className="hidden md:block text-left">
+                        <p className="text-sm font-semibold text-gray-700">
+                          {user.nombres}
+                        </p>
+                        <p className="text-xs text-gray-500">{getRoleName()}</p>
+                      </div>
+                      <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
                     </button>
+
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 animate-fadeIn">
+                        <div className="px-4 py-3 border-b border-gray-200">
+                          <p className="text-sm font-semibold text-gray-900">{user.nombres}</p>
+                          <p className="text-xs text-gray-500">{user.email}</p>
+                          <span className="inline-block mt-2 px-2 py-1 rounded text-xs font-medium" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
+                            {getRoleName()}
+                          </span>
+                        </div>
+
+                        <div className="py-2">
+                          <button
+                            onClick={() => {
+                              onGoToDashboard();
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          >
+                            <LayoutDashboard className="w-4 h-4" style={{ color: '#7ECBF2' }} />
+                            Mi Dashboard
+                          </button>
+
+                          <button
+                            onClick={() => setShowUserMenu(false)}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          >
+                            <Settings className="w-4 h-4" style={{ color: '#7ECBF2' }} />
+                            Configuración
+                          </button>
+                        </div>
+
+                        <div className="border-t border-gray-200 pt-2">
+                          <button
+                            onClick={() => {
+                              onLogout();
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            Cerrar sesión
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <>
@@ -272,6 +340,22 @@ export default function Homepage({ user, onGoToLogin, onLogout, onGoToServiceSea
           </div>
         </div>
       </footer>
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

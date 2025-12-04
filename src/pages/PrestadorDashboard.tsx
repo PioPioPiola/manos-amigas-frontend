@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { User } from '../types/User';
 import { Service, PrestadorStats } from '../types/Service';
 import {
+  Moon,
+  Shield,
   DollarSign,
   Star,
   CheckCircle,
@@ -13,15 +15,22 @@ import {
   MessageCircle,
   ChevronRight,
   Menu,
-  User as UserIcon
+  User as UserIcon,
+  LayoutDashboard, Settings, LogOut, ChevronDown
 } from 'lucide-react';
 
 interface PrestadorDashboardProps {
   user: User;
+  onGoToLogin: () => void;
   onLogout: () => void;
+  onGoToServiceSearch: () => void;
+  onGoToDashboard: () => void;
+  onBackToHome: () => void;
 }
 
-export default function PrestadorDashboard({ user, onLogout }: PrestadorDashboardProps) {
+export default function PrestadorDashboard({ user, onLogout, onBackToHome, onGoToServiceSearch, onGoToDashboard, onGoToLogin }: PrestadorDashboardProps) {
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const [stats, setStats] = useState<PrestadorStats>({
     servicios_completados: 45,
     calificacion_promedio: 4.8,
@@ -38,6 +47,11 @@ export default function PrestadorDashboard({ user, onLogout }: PrestadorDashboar
   useEffect(() => {
     fetchServices();
   }, []);
+
+  const getRoleName = () => {
+    if (!user) return '';
+    return user.rol === '0' ? 'Solicitante' : 'Prestador';
+  };
 
   const fetchServices = async () => {
     setLoading(true);
@@ -159,37 +173,116 @@ export default function PrestadorDashboard({ user, onLogout }: PrestadorDashboar
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <img src="/LogoColor.png" alt="ManosAmigas" className="h-10 w-10" />
-              <span className="text-xl font-semibold" style={{ color: '#7ECBF2' }}>ManosAmigas</span>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <button className="p-2 hover:bg-gray-100 rounded-lg">
-                <MessageCircle className="w-5 h-5 text-gray-600" />
-              </button>
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                  style={{ background: 'linear-gradient(to bottom right, #7ECBF2, #5B9FC8)' }}
-                >
-                  {user.nombres.charAt(0).toUpperCase()}
+      <header className="border-b border-gray-200 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <div className="flex items-center space-x-8">
+                <div className="flex items-center space-x-2">
+                  <img onClick={onBackToHome} src="/LogoColor.png" alt="ManosAmigas" className="h-10 w-10" style={{ cursor: 'pointer' }}/>
+                  <span onClick={onBackToHome} className="text-xl font-semibold" style={{ color: '#7ECBF2' , cursor: 'pointer'}}>ManosAmigas</span>
                 </div>
-                <div className="hidden md:block">
-                  <p className="text-sm font-semibold text-gray-900">{user.nombres}</p>
-                  <p className="text-xs text-gray-500">Prestador</p>
-                </div>
+                <nav className="hidden md:flex space-x-8">
+                  <button onClick={onGoToServiceSearch} className="text-gray-600 hover:text-sky-400 transition-colors text-sm">
+                    Buscar Servicios
+                  </button>
+                  <a href="#servicios" className="text-gray-600 hover:text-sky-400 transition-colors text-sm">
+                    Categorías
+                  </a>
+                </nav>
               </div>
-              <button className="p-2 hover:bg-gray-100 rounded-lg md:hidden">
-                <Menu className="w-5 h-5 text-gray-600" />
-              </button>
+
+              <div className="flex items-center space-x-4">
+                <button
+                  className="p-2"
+                  aria-label="Theme icon"
+                >
+                  <Moon className="w-5 h-5 text-gray-600" />
+                </button>
+
+                {user ? (
+                  <div className="relative" ref={menuRef}>
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="flex items-center gap-3 hover:bg-gray-50 rounded-lg px-3 py-2 transition-colors"
+                    >
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-sm"
+                        style={{
+                          background: 'linear-gradient(to bottom right, #7ECBF2, #5B9FC8)'
+                        }}
+                      >
+                        {user.nombres.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="hidden md:block text-left">
+                        <p className="text-sm font-semibold text-gray-700">
+                          {user.nombres}
+                        </p>
+                        <p className="text-xs text-gray-500">{getRoleName()}</p>
+                      </div>
+                      <ChevronDown className={`w-4 h-4 text-gray-600 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50 animate-fadeIn">
+                        <div className="px-4 py-3 border-b border-gray-200">
+                          <p className="text-sm font-semibold text-gray-900">{user.nombres}</p>
+                          <p className="text-xs text-gray-500">{user.email}</p>
+                          <span className="inline-block mt-2 px-2 py-1 rounded text-xs font-medium" style={{ backgroundColor: '#E8F4F8', color: '#5B9FC8' }}>
+                            {getRoleName()}
+                          </span>
+                        </div>
+
+                        <div className="py-2">
+                          <button
+                            onClick={() => {
+                              onGoToDashboard();
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          >
+                            <LayoutDashboard className="w-4 h-4" style={{ color: '#7ECBF2' }} />
+                            Mi Dashboard
+                          </button>
+
+                          <button
+                            onClick={() => setShowUserMenu(false)}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          >
+                            <Settings className="w-4 h-4" style={{ color: '#7ECBF2' }} />
+                            Configuración
+                          </button>
+                        </div>
+
+                        <div className="border-t border-gray-200 pt-2">
+                          <button
+                            onClick={() => {
+                              onLogout();
+                              setShowUserMenu(false);
+                            }}
+                            className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            Cerrar sesión
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <UserIcon className="w-5 h-5 text-gray-600" />
+                    <button
+                      onClick={onGoToLogin}
+                      className="text-sm text-gray-700 hover:text-sky-400 transition-colors"
+                    >
+                      Iniciar sesión
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">

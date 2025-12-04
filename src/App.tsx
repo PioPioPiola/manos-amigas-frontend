@@ -27,23 +27,8 @@ function App() {
         if (result.user.estado_cuenta === 'U') {
           setCurrentView('pending');
           showNotification('Tu cuenta está pendiente de verificación', 'error');
-        } else if (result.user.estado_cuenta === 'Verificado') {
-          if (result.user.rol === '1') {
-            setCurrentView('solicitanteDashboard');
-          } else if (result.user.rol === '2') {
-            setCurrentView('prestadorDashboard');
-          } else {
-            setCurrentView('home');
-          }
-          showNotification(`¡Bienvenido de nuevo, ${result.user.nombres}!`, 'success');
         } else {
-          if (result.user.rol === '1') {
-            setCurrentView('solicitanteDashboard');
-          } else if (result.user.rol === '2') {
-            setCurrentView('prestadorDashboard');
-          } else {
-            setCurrentView('home');
-          }
+          setCurrentView('home');
           showNotification(`¡Bienvenido de nuevo, ${result.user.nombres}!`, 'success');
         }
       } else {
@@ -55,6 +40,17 @@ function App() {
       setIsLoading(false);
     }
   };
+
+  const handleGoToDashboard = () => {
+    if (user) {
+      if (user.rol === '1') {
+        setCurrentView('solicitanteDashboard');
+      } else if (user.rol === '2') {
+        setCurrentView('prestadorDashboard');
+      }
+    }
+  };
+  
   const handleRegister = async (userData: RegisterFormData) => {
     setIsLoading(true);
     try {
@@ -116,14 +112,16 @@ function App() {
 </div>
 </div>
       )}
-      {currentView === 'home' && (
-<Homepage
-          user={user}
-          onGoToLogin={handleGoToLogin}
-          onLogout={handleLogout}
-          onGoToServiceSearch={handleGoToServiceSearch}
-        />
-      )}
+  {currentView === 'home' && (
+    <Homepage
+      user={user}
+      onGoToLogin={handleGoToLogin}
+      onLogout={handleLogout}
+      onGoToServiceSearch={handleGoToServiceSearch}
+      onGoToDashboard={handleGoToDashboard}
+      onBackToHome={handleBackToHome}
+    />
+  )}
       {currentView === 'login' && (
 <Login
           onLoginSuccess={handleLogin}
@@ -147,17 +145,29 @@ function App() {
           user={user}
           onLogout={handleLogout}
           onCreateService={handleCreateService}
+          onBackToHome={handleBackToHome}
+          onGoToServiceSearch={handleGoToServiceSearch}
+          onGoToDashboard={handleGoToDashboard}
+          onGoToLogin={handleGoToLogin}
         />
       )}
       {currentView === 'prestadorDashboard' && user && (
 <PrestadorDashboard
           user={user}
           onLogout={handleLogout}
+          onBackToHome={handleBackToHome}
+          onGoToServiceSearch={handleGoToServiceSearch}
+          onGoToDashboard={handleGoToDashboard}
+          onGoToLogin={handleGoToLogin}
         />
       )}
-      {currentView === 'serviceResults' && (
+      {currentView === 'serviceResults' && user && (
 <ServiceResults
+          user={user}
+          onLogout={handleLogout}
           onBackToHome={handleBackToHome}
+          onGoToServiceSearch={handleGoToServiceSearch}
+          onGoToDashboard={handleGoToDashboard}
           onGoToLogin={handleGoToLogin}
           isLoggedIn={!!user}
         />

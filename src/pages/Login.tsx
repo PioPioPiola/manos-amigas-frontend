@@ -35,6 +35,7 @@ export default function Login({ onLoginSuccess, onGoToRegister, onBackToHome, is
         <div className="w-full max-w-md">
           <div className="flex justify-center mb-8">
             <img
+              onClick={onBackToHome}
               src="/LogoColor.png"
               alt="ManosAmigas"
               className="h-24 w-24"
