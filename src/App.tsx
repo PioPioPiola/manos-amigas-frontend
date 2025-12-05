@@ -9,6 +9,8 @@ import ServiceResults from './pages/ServiceResults';
 import AdminUserAccounts from './pages/AdminUserAccounts';
 import { User, RegisterFormData } from './types/User';
 import { authService } from './services/authService';
+import { serviceRequestService, CreateServiceRequestDTO } from './services/serviceService';
+
 type ViewType = 'home' | 'login' | 'register' | 'pending' | 'solicitanteDashboard' | 'prestadorDashboard' | 'serviceResults' | 'adminDashboard';
 function App() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
@@ -79,8 +81,29 @@ function App() {
     setCurrentView('home');
     showNotification('Sesión cerrada correctamente', 'success');
   };
-  const handleCreateService = () => {
-    showNotification('Funcionalidad de crear servicio próximamente', 'success');
+  const handleCreateService = async () => {
+
+    const serviceData: CreateServiceRequestDTO = {
+        prestadorId: '123e4567-e89b-12d3-a456-426655440000', 
+        titulo: 'Clase de Piano Avanzado',
+        descripcion: 'Clases personalizadas para niveles intermedios y avanzados.',
+        categoria: 'Educacion',
+        precioMin: 50000,
+        precioMax: 80000,
+    };  
+        
+    try {
+          const result = await serviceRequestService.createService(serviceData);
+
+          if (result.success) {
+              showNotification('Servicio creado exitosamente', 'success');
+          } else {
+              showNotification(`Error: ${result.error}`, 'error');
+          }
+      } catch (e) {
+          showNotification('Error interno del sistema o de conexión.', 'error');
+          console.error("Error al crear servicio:", e);
+      }
   };
   const handleGoToLogin = () => {
     setCurrentView('login');
@@ -144,7 +167,10 @@ function App() {
         />
       )}
       {currentView === 'pending' && (
-<Pending onBackToHome={handleBackToHome} />
+<Pending 
+onBackToHome={handleBackToHome} 
+onLogout={handleLogout}
+/>
       )}
       {currentView === 'solicitanteDashboard' && user && (
 <SolicitanteDashboard

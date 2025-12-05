@@ -2,14 +2,15 @@ import { Mail, Clock, Home } from 'lucide-react';
 
 interface PendingProps {
   onBackToHome: () => void;
+  onLogout: () => void;
 }
 
-export default function Pending({ onBackToHome }: PendingProps) {
+export default function Pending({ onBackToHome, onLogout }: PendingProps) {
   return (
     <div className="min-h-screen bg-white">
       <div className="p-4">
         <button
-          onClick={onBackToHome}
+          onClick={onLogout}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-800 text-sm"
         >
           <Home className="w-4 h-4" />
@@ -52,7 +53,7 @@ export default function Pending({ onBackToHome }: PendingProps) {
 
             <div className="flex gap-3">
               <button
-                onClick={onBackToHome}
+                onClick={onLogout}
                 className="px-8 py-3 text-white rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-md text-sm"
                 style={{ backgroundColor: '#0A2540' }}
               >
