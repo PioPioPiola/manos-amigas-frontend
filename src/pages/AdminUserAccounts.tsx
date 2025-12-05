@@ -194,7 +194,6 @@ export default function AdminUserAccounts({
 
   const filterButtons = [
     { label: 'Todos', value: '', count: users.length },
-    // CORRECCIÓN 1: Usar .estado_cuenta
     { label: 'Pendientes', value: AccountStatus.Unverified, count: users.filter(u => u.estado_cuenta === AccountStatus.Unverified).length },
     { label: 'Activos', value: AccountStatus.Active, count: users.filter(u => u.estado_cuenta === AccountStatus.Active).length },
     { label: 'Inactivos', value: AccountStatus.Inactive, count: users.filter(u => u.estado_cuenta === AccountStatus.Inactive).length },
@@ -424,7 +423,6 @@ export default function AdminUserAccounts({
                                   className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm"
                                   style={{ backgroundColor: '#7ECBF2' }}
                                 >
-                                    {/* CORRECCIÓN 2: Uso de optional chaining para evitar TypeError: Cannot read properties of undefined (reading 'charAt') */}
                                   {userItem.nombres?.[0]?.toUpperCase() || userItem.email.charAt(0).toUpperCase()}
                                 </div>
                                 <div>

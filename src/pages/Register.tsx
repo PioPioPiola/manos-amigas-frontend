@@ -321,7 +321,7 @@ export default function Register({ onRegister, onBackToLogin, isLoading: externa
             </p>
 
             <FileUpload
-              label="Foto frontal del documento"
+              label="Foto frontal del documento, Foto del reverso y Selfie con documento"
               required
               value={formData.DocumentFront}
               onFileSelect={(file) => setFormData({ ...formData, DocumentFront: file })}
